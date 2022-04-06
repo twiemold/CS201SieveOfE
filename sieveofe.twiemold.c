@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 #define START_VALUE 2
-#define UPPER_BOUND 100
+#define UPPER_BOUND 1000000000
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
-#define NUM_THREADS 1
+#define NUM_THREADS 4
 
 typedef struct {
     char* numPtr;
+    pthread_mutex_t* mutexPtr;
 } SieveData;
 
 
@@ -20,6 +21,7 @@ void *sieve(void *param) {
     char done = 0;
     int chosenStart = START_VALUE;
     while (!(done)) {
+        pthread_mutex_lock(data->mutexPtr);
         while (!(data->numPtr[chosenStart] != -1 && data->numPtr[chosenStart] != 0) && chosenStart < STOP_VALUE) {
             chosenStart++;
         }
@@ -28,6 +30,7 @@ void *sieve(void *param) {
         } else {
             done = 1;
         }
+        pthread_mutex_unlock(data->mutexPtr);
         if (!(done)) {
             int val = 2;
             int multiple = val * chosenStart;
@@ -50,7 +53,13 @@ int main() {
         nums[i] = 1;
     }
 
+    pthread_mutex_t mutex;
+    pthread_mutex_init(&mutex, NULL);
+    pthread_mutex_t* mutexPtr;
+    mutexPtr = &mutex;
+
     data.numPtr = nums;
+    data.mutexPtr = mutexPtr;
     clock_t start, end;
     double cpu_time_used;
 
