@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <pthread.h>
+#include <stdlib.h>
 #define START_VALUE 2
-#define UPPER_BOUND 1000000
+#define UPPER_BOUND 10000000
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
 #define NUM_THREADS 10
 
@@ -33,7 +34,7 @@ void *crossing(char nums[]) {
 
 int main() {
     pthread_t tid[NUM_THREADS];
-    char nums[UPPER_BOUND];
+    char* nums = (char*) malloc((UPPER_BOUND * sizeof(char)));
     int i;
     for (i = START_VALUE; i < UPPER_BOUND; ++i) {
         nums[i] = 1;
@@ -42,7 +43,7 @@ int main() {
     // create and start the threads
     for (i = 0; i<NUM_THREADS; ++i) {
         // create and start a child thread
-        pthread_create(&tid[i], NULL, crossing, &nums);
+        pthread_create(&tid[i], NULL, crossing, nums);
     }
     // wait for the child threads to terminate
     for (i=0; i<NUM_THREADS; ++i) {
