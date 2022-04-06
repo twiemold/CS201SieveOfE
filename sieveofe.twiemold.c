@@ -1,44 +1,33 @@
 #include <stdio.h>
 #include <math.h>
+#define startValue 2
 #define arrayMax 200
 #define stopValue floor(sqrt(arrayMax)) + 1
-// TODO: 0 indexing problem?
 
 int main() {
     char done = 0;
     char nums[arrayMax];
-    for (int i = 2; i < arrayMax; ++i) {
+    for (int i = startValue; i < arrayMax; ++i) {
         nums[i] = 1;
     }
-//    while not done {
+
+    int chosenStart = startValue;
     while (!(done)) {
-        char pPicked = 0;
-        // let p be the smallest integer less than or equal to stopValue
-        // and not yet crossed off and not marked as visited
-        int p = 2;
-        for (int i = 2; i <= stopValue; ++i) {
-            if (nums[i] != 0 && nums[i] != -1) {
-                p = i;
-                pPicked = 1;
-            }
+        while (!(nums[chosenStart] != -1 && nums[chosenStart] != 0) && chosenStart < stopValue) {
+            chosenStart++;
         }
-        // if there is no such number {
-        // done = 1
-        // } else {
-        // mark p as visited
-        // cross off all multiples of p, starting at 2*p and ending at arrayMax
-        if (!(pPicked)) {
-            pPicked = 1;
-            done = 1;
+        if (chosenStart < stopValue) {
+            nums[chosenStart] = -1;
         } else {
-            nums[p] = -1;
-            // cross off all multiples of p, starting at 2*p and ending at arrayMax
+            done = 1;
+        }
+        if (!(done)) {
             int val = 2;
-            int multiple = val * p;
+            int multiple = val * chosenStart;
             while (multiple < arrayMax) {
                 nums[multiple] = 0;
                 val++;
-                multiple = val * p;
+                multiple = val * chosenStart;
             }
         }
     }
