@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <math.h>
 #define startValue 2
-#define arrayMax 200
-#define stopValue floor(sqrt(arrayMax)) + 1
+#define upperBound 200
+#define stopValue floor(sqrt(upperBound)) + 1
 
 int main() {
     char done = 0;
-    char nums[arrayMax];
-    for (int i = startValue; i < arrayMax; ++i) {
+    char nums[upperBound];
+    for (int i = startValue; i < upperBound; ++i) {
         nums[i] = 1;
     }
 
@@ -24,7 +24,7 @@ int main() {
         if (!(done)) {
             int val = 2;
             int multiple = val * chosenStart;
-            while (multiple < arrayMax) {
+            while (multiple < upperBound) {
                 nums[multiple] = 0;
                 val++;
                 multiple = val * chosenStart;
@@ -33,7 +33,7 @@ int main() {
     }
 
     int count = 0;
-    for (int i = 0; i < arrayMax; ++i) {
+    for (int i = 0; i < upperBound; ++i) {
         if (nums[i] == 1 || nums[i] == -1) {
             count++;
         }
