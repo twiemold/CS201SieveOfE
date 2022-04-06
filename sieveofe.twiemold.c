@@ -4,7 +4,7 @@
 #define START_VALUE 2
 #define UPPER_BOUND 1000000
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
-#define NUM_THREADS 20
+#define NUM_THREADS 10
 
 void *crossing(char nums[]) {
     char done = 0;
