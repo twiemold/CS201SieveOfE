@@ -4,19 +4,27 @@
 #include <stdlib.h>
 #include <time.h>
 #define START_VALUE 2
-#define UPPER_BOUND 1000000000
+#define UPPER_BOUND 100
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
-#define NUM_THREADS 10
+#define NUM_THREADS 1
 
-void *sieve(char nums[]) {
+typedef struct {
+    char* numPtr;
+} SieveData;
+
+
+void *sieve(void *param) {
+    SieveData *data;
+    data = (SieveData *) param;
+
     char done = 0;
     int chosenStart = START_VALUE;
     while (!(done)) {
-        while (!(nums[chosenStart] != -1 && nums[chosenStart] != 0) && chosenStart < STOP_VALUE) {
+        while (!(data->numPtr[chosenStart] != -1 && data->numPtr[chosenStart] != 0) && chosenStart < STOP_VALUE) {
             chosenStart++;
         }
         if (chosenStart < STOP_VALUE) {
-            nums[chosenStart] = -1;
+            data->numPtr[chosenStart] = -1;
         } else {
             done = 1;
         }
@@ -24,7 +32,7 @@ void *sieve(char nums[]) {
             int val = 2;
             int multiple = val * chosenStart;
             while (multiple < UPPER_BOUND) {
-                nums[multiple] = 0;
+                data->numPtr[multiple] = 0;
                 val++;
                 multiple = val * chosenStart;
             }
@@ -34,6 +42,7 @@ void *sieve(char nums[]) {
 }
 
 int main() {
+    SieveData data;
     pthread_t tid[NUM_THREADS];
     char* nums = (char*) malloc((UPPER_BOUND * sizeof(char)));
     int i;
@@ -41,6 +50,7 @@ int main() {
         nums[i] = 1;
     }
 
+    data.numPtr = nums;
     clock_t start, end;
     double cpu_time_used;
 
@@ -48,7 +58,7 @@ int main() {
     // create and start the threads
     for (i = 0; i<NUM_THREADS; ++i) {
         // create and start a child thread
-        pthread_create(&tid[i], NULL, sieve, nums);
+        pthread_create(&tid[i], NULL, sieve, &data);
     }
     // wait for the child threads to terminate
     for (i=0; i<NUM_THREADS; ++i) {
