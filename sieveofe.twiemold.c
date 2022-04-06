@@ -2,8 +2,9 @@
 #include <math.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <time.h>
 #define START_VALUE 2
-#define UPPER_BOUND 10000000
+#define UPPER_BOUND 1000000000
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
 #define NUM_THREADS 10
 
@@ -40,6 +41,10 @@ int main() {
         nums[i] = 1;
     }
 
+    clock_t start, end;
+    double cpu_time_used;
+
+    start = clock();
     // create and start the threads
     for (i = 0; i<NUM_THREADS; ++i) {
         // create and start a child thread
@@ -49,6 +54,9 @@ int main() {
     for (i=0; i<NUM_THREADS; ++i) {
         pthread_join(tid[i], NULL);
     }
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time used = %f\n", cpu_time_used);
 
     int count = 0;
     for (i = 0; i < UPPER_BOUND; ++i) {
