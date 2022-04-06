@@ -8,7 +8,7 @@
 #define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
 #define NUM_THREADS 10
 
-void *crossing(char nums[]) {
+void *sieve(char nums[]) {
     char done = 0;
     int chosenStart = START_VALUE;
     while (!(done)) {
@@ -48,7 +48,7 @@ int main() {
     // create and start the threads
     for (i = 0; i<NUM_THREADS; ++i) {
         // create and start a child thread
-        pthread_create(&tid[i], NULL, crossing, nums);
+        pthread_create(&tid[i], NULL, sieve, nums);
     }
     // wait for the child threads to terminate
     for (i=0; i<NUM_THREADS; ++i) {
