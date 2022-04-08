@@ -2,13 +2,14 @@
 #include <math.h>
 #include <pthread.h>
 #include <stdlib.h>
-#include <time.h>
 #define START_VALUE 2
-#define UPPER_BOUND 1000000000
-#define STOP_VALUE floor(sqrt(UPPER_BOUND)) + 1
+#define UPPER_BOUND 10000000
 #define NUM_THREADS 4
 
 typedef struct {
+    int startValue;
+    int stopValue;
+    long upperBound;
     char* numPtr;
     pthread_mutex_t* mutexPtr;
 } SieveData;
@@ -19,13 +20,15 @@ void *sieve(void *param) {
     data = (SieveData *) param;
 
     char done = 0;
-    int chosenStart = START_VALUE;
+    int chosenStart = data->startValue;
     while (!(done)) {
         pthread_mutex_lock(data->mutexPtr);
-        while (!(data->numPtr[chosenStart] != -1 && data->numPtr[chosenStart] != 0) && chosenStart < STOP_VALUE) {
+        while (!(data->numPtr[chosenStart] != -1
+                && data->numPtr[chosenStart] != 0)
+                && chosenStart < data->stopValue) {
             chosenStart++;
         }
-        if (chosenStart < STOP_VALUE) {
+        if (chosenStart < data->stopValue) {
             data->numPtr[chosenStart] = -1;
         } else {
             done = 1;
@@ -34,7 +37,7 @@ void *sieve(void *param) {
         if (!(done)) {
             int val = 2;
             int multiple = val * chosenStart;
-            while (multiple < UPPER_BOUND) {
+            while (multiple < data->upperBound) {
                 data->numPtr[multiple] = 0;
                 val++;
                 multiple = val * chosenStart;
@@ -55,27 +58,21 @@ int main() {
 
     pthread_mutex_t mutex;
     pthread_mutex_init(&mutex, NULL);
-    pthread_mutex_t* mutexPtr;
-    mutexPtr = &mutex;
+    pthread_mutex_t* mutexPtr = &mutex;
 
     data.numPtr = nums;
     data.mutexPtr = mutexPtr;
-    clock_t start, end;
-    double cpu_time_used;
+    data.startValue = START_VALUE;
+    data.upperBound = UPPER_BOUND;
+    data.stopValue = floor(sqrt(UPPER_BOUND)) + 1;
 
-    start = clock();
-    // create and start the threads
     for (i = 0; i<NUM_THREADS; ++i) {
         // create and start a child thread
         pthread_create(&tid[i], NULL, sieve, &data);
     }
-    // wait for the child threads to terminate
     for (i=0; i<NUM_THREADS; ++i) {
         pthread_join(tid[i], NULL);
     }
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time used = %f\n", cpu_time_used);
 
     int count = 0;
     for (i = 0; i < UPPER_BOUND; ++i) {
@@ -83,7 +80,8 @@ int main() {
             count++;
         }
     }
-    printf("%d", count);
+    printf("Number of primes between %d and %d: %d",START_VALUE, UPPER_BOUND, count);
+    free(nums);
 
     return 0;
 }
