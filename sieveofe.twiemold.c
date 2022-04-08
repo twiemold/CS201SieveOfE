@@ -1,10 +1,19 @@
+/*
+ * Thomas Wiemold
+ * CS201
+ * 4/8/2022
+ * Programming Assignment #4:
+ * Multithreaded Sieve of Eratosthenes
+ * C File
+ */
+
 #include <stdio.h>
 #include <math.h>
 #include <pthread.h>
 #include <stdlib.h>
 #define START_VALUE 2
-#define UPPER_BOUND 10000000
-#define NUM_THREADS 4
+#define UPPER_BOUND 1000000000
+#define NUM_THREADS 10
 
 typedef struct {
     int startValue;
